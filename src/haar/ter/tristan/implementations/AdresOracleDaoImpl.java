@@ -2,7 +2,11 @@ package haar.ter.tristan.implementations;
 
 import haar.ter.tristan.interfaces.AdresDao;
 import haar.ter.tristan.models.Adres;
+import haar.ter.tristan.models.Reiziger;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,61 +15,152 @@ public class AdresOracleDaoImpl implements AdresDao
     List<Adres> adressen = new ArrayList<>();
     @Override
     public List<Adres> findAll() {
-        return this.adressen;
+        try
+        {
+            Statement stmt = this.connection.createStatement();
+            String query = "SELECT * FROM ADRES";
+            ResultSet rs = stmt.executeQuery(query);
+            List<Adres> adressen = new ArrayList<>();
+            while (rs.next()) {
+                //long reizigerID, String voornaam, String tussenvoegsel, String achternaam, Date geboortedatum
+                adressen.add(
+                        new Adres(
+                                rs.getInt("ADRESID"),
+                                rs.getString("POSTCODE"),
+                                rs.getString("HUISNUMMER"),
+                                rs.getString("STRAAT"),
+                                rs.getString("WOONPLAATS"),
+                                rs.getInt("REIZIGERID")
+                        )
+                );
+            }
+            rs.close();
+            stmt.close();
+            return adressen;
+        }
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public List<Adres> findByReizigerID(long id) {
-        List<Adres> adresMetReizigerID = new ArrayList<>();
-        for (Adres adres: this.adressen)
-        {
-            if(adres.getReizigerID() == id)
-            {
-                adresMetReizigerID.add(adres);
+        String query = "SELECT * FROM ADRES WHERE REIZIGERID =" + id;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            List<Adres> adresMetReiziger = new ArrayList<>();
+            while (rs.next()) {
+                //long reizigerID, String voornaam, String tussenvoegsel, String achternaam, Date geboortedatum
+                adresMetReiziger.add(
+                        new Adres(
+                                rs.getInt("ADRESID"),
+                                rs.getString("POSTCODE"),
+                                rs.getString("HUISNUMMER"),
+                                rs.getString("STRAAT"),
+                                rs.getString("WOONPLAATS"),
+                                rs.getInt("REIZIGERID")
+                        )
+                );
             }
+            rs.close();
+            stmt.close();
+            return adresMetReiziger;
         }
-        return adresMetReizigerID;
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public Adres findByID(long id) {
-        Adres foundAdres = null;
-        for (Adres adres: this.adressen)
-        {
-            if(adres.getAdresID() == id)
-            {
-                foundAdres = adres;
-            }
+        String query = "SELECT * FROM ADRES WHERE ADRESID = " + id;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            Adres adres = null;
+            rs.next();
+            adres = new Adres(
+                    rs.getInt("ADRESID"),
+                    rs.getString("POSTCODE"),
+                    rs.getString("HUISNUMMER"),
+                    rs.getString("STRAAT"),
+                    rs.getString("WOONPLAATS"),
+                    rs.getInt("REIZIGERID")
+            );
+            rs.close();
+            stmt.close();
+            return adres;
         }
-        return foundAdres;
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public Adres save(Adres adres) {
-        adressen.add(adres);
-        return adres;
+        String query = "INSERT INTO ADRES (ADRESID, POSTCODE, HUISNUMMER, STRAAT, WOONPLAATS, REIZIGERID) VALUES ("+
+                adres.getAdresID()+",'"+
+                adres.getPostcode()+"','"+
+                adres.getHuisnummer()+"','"+
+                adres.getStraat()+"','"+
+                adres.getWoonplaats()+"',"+
+                adres.getReizigerID() +
+                ")";
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return adres;
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public Adres update(Adres adres) {
-        for (Adres opgeslagenAdres : this.adressen)
-        {
-            if(opgeslagenAdres.equals(adres))
-            {
-                opgeslagenAdres.setReizigerID(adres.getReizigerID());
-                opgeslagenAdres.setAdresID(adres.getAdresID());
-                opgeslagenAdres.setHuisnummer(adres.getHuisnummer());
-                opgeslagenAdres.setPostcode(adres.getPostcode());
-                opgeslagenAdres.setStraat(adres.getStraat());
-                opgeslagenAdres.setWoonplaats(adres.getWoonplaats());
-                return opgeslagenAdres;
-            }
+        String query = "UPDATE ADRES SET "+
+                "POSTCODE='" + adres.getPostcode()+"',"+
+                "HUISNUMMER='" + adres.getHuisnummer()+"',"+
+                "STRAAT='" + adres.getStraat()+"',"+
+                "WOONPLAATS='" + adres.getWoonplaats()+"',"+
+                "REIZIGERID=" + adres.getReizigerID()+
+                " WHERE ADRESID=" + adres.getAdresID();
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return adres;
         }
-        return null;
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public boolean delete(Adres adres) {
-        return this.adressen.remove(adres);
+    public boolean delete(long adresID) {
+        String query = "DELETE FROM ADRES WHERE ADRESID=" + adresID;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return true;
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

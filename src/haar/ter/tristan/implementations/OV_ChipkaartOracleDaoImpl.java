@@ -2,70 +2,159 @@ package haar.ter.tristan.implementations;
 
 import haar.ter.tristan.interfaces.OV_ChipkaartDao;
 import haar.ter.tristan.models.OV_Chipkaart;
+import haar.ter.tristan.models.Product;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OV_ChipkaartOracleDaoImpl implements OV_ChipkaartDao
 {
-    List<OV_Chipkaart> ov_chipkaarten = new ArrayList<>();
 
     @Override
     public List<OV_Chipkaart> findAll() {
-        return this.ov_chipkaarten;
+        try
+        {
+            Statement stmt = this.connection.createStatement();
+            String query = "SELECT * FROM OV_CHIPKAART";
+            ResultSet rs = stmt.executeQuery(query);
+            List<OV_Chipkaart> ov_chipkaartList = new ArrayList<>();
+            while (rs.next()) {
+                //long kaartNummer, Date geldigTot, short klasse, float saldo, long reizigerID
+                ov_chipkaartList.add(
+                        new OV_Chipkaart(
+                                rs.getInt("KAARTNUMMER"),
+                                rs.getDate("GELDIGTOT"),
+                                rs.getShort("KLASSE"),
+                                rs.getFloat("SALDO"),
+                                rs.getInt("REIZIGERID")
+                        )
+                );
+            }
+            rs.close();
+            stmt.close();
+            return ov_chipkaartList;
+        }
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public List<OV_Chipkaart> findByReizigerID(long id) {
-        List<OV_Chipkaart> ov_chipkaartMetReizigerID = new ArrayList<>();
-        for (OV_Chipkaart ov_chipkaart: this.ov_chipkaarten)
-        {
-            if(ov_chipkaart.getReizigerID() == id)
-            {
-                ov_chipkaartMetReizigerID.add(ov_chipkaart);
+        String query = "SELECT * FROM OV_CHIPKAART WHERE REIZIGERID =" + id;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            List<OV_Chipkaart> ovChipkaartMetReiziger = new ArrayList<>();
+            while (rs.next()) {
+                ovChipkaartMetReiziger.add(
+                        new OV_Chipkaart(
+                                rs.getInt("KAARTNUMMER"),
+                                rs.getDate("GELDIGTOT"),
+                                rs.getShort("KLASSE"),
+                                rs.getFloat("SALDO"),
+                                rs.getInt("REIZIGERID")
+                        )
+                );
             }
+            rs.close();
+            stmt.close();
+            return ovChipkaartMetReiziger;
         }
-        return ov_chipkaartMetReizigerID;
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public OV_Chipkaart findByID(long id) {
-        OV_Chipkaart foundOV_Chipkaart = null;
-        for (OV_Chipkaart ov_chipkaart: this.ov_chipkaarten)
-        {
-            if(ov_chipkaart.getKaartNummer() == id)
-            {
-                foundOV_Chipkaart = ov_chipkaart;
-            }
+        String query = "SELECT * FROM OV_CHIPKAART WHERE KAARTNUMMER = " + id;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            OV_Chipkaart ov_chipkaart = null;
+            rs.next();
+            ov_chipkaart = new OV_Chipkaart(
+                    rs.getInt("KAARTNUMMER"),
+                    rs.getDate("GELDIGTOT"),
+                    rs.getShort("KLASSE"),
+                    rs.getFloat("SALDO"),
+                    rs.getInt("REIZIGERID")
+            );
+            rs.close();
+            stmt.close();
+            return ov_chipkaart;
         }
-        return foundOV_Chipkaart;
+        catch (SQLException ex)
+        {
+            return null;
+        }
     }
 
     @Override
     public OV_Chipkaart save(OV_Chipkaart ov_chipkaart) {
-        ov_chipkaarten.add(ov_chipkaart);
-        return ov_chipkaart;
+        String query = "INSERT INTO OV_CHIPKAART (KAARTNUMMER, GELDIGTOT, KLASSE, SALDO, REIZIGERID) VALUES ("+
+                ov_chipkaart.getKaartNummer()+","+
+                "TO_DATE('"+ov_chipkaart.getGeldigTot()+"', 'YYYY-MM-DD'),"+
+                ov_chipkaart.getKlasse()+","+
+                ov_chipkaart.getSaldo()+","+
+                ov_chipkaart.getReizigerID()+
+                ")";
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return ov_chipkaart;
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public OV_Chipkaart update(OV_Chipkaart ov_chipkaart) {
-        for (OV_Chipkaart opgeslagenOV_Chipkaart : this.ov_chipkaarten)
-        {
-            if(opgeslagenOV_Chipkaart.equals(ov_chipkaart))
-            {
-                opgeslagenOV_Chipkaart.setReizigerID(ov_chipkaart.getReizigerID());
-                opgeslagenOV_Chipkaart.setKaartNummer(ov_chipkaart.getKaartNummer());
-                opgeslagenOV_Chipkaart.setGeldigTot(ov_chipkaart.getGeldigTot());
-                opgeslagenOV_Chipkaart.setKlasse(ov_chipkaart.getKlasse());
-                opgeslagenOV_Chipkaart.setSaldo(ov_chipkaart.getSaldo());
-                return opgeslagenOV_Chipkaart;
-            }
+        String query = "UPDATE OV_CHIPKAART SET "+
+                "GELDIGTOT=" + "TO_DATE('"+ov_chipkaart.getGeldigTot()+"', 'YYYY-MM-DD')"+","+
+                "KLASSE=" + ov_chipkaart.getKlasse()+","+
+                "SALDO=" + ov_chipkaart.getSaldo()+","+
+                "REIZIGERID=" + ov_chipkaart.getReizigerID()+
+                " WHERE KAARTNUMMER=" + ov_chipkaart.getKaartNummer();
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return ov_chipkaart;
         }
-        return null;
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public boolean delete(OV_Chipkaart ov_chipkaart) {
-        return this.ov_chipkaarten.remove(ov_chipkaart);
+    public boolean delete(long kaartnummer) {
+        String query = "DELETE FROM OV_CHIPKAART WHERE  KAARTNUMMER=" + kaartnummer;
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            rs.close();
+            stmt.close();
+            return true;
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package haar.ter.tristan.models;
 
+import haar.ter.tristan.DatabaseConfig;
+
 import java.sql.Date;
 
 public class OV_Chipkaart_Product
@@ -12,6 +14,14 @@ public class OV_Chipkaart_Product
 
     public OV_Chipkaart_Product()
     {
+    }
+
+    public OV_Chipkaart_Product(long ovproductID, long kaartNummer, long productNummer, String reisproductStatus, Date lastUpdate) {
+        this.ovproductID = ovproductID;
+        this.kaartNummer = kaartNummer;
+        this.productNummer = productNummer;
+        this.reisproductStatus = reisproductStatus;
+        this.lastUpdate = lastUpdate;
     }
 
     public long getOvproductID() {
@@ -53,4 +63,15 @@ public class OV_Chipkaart_Product
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
+    public OV_Chipkaart getOV_Chipkaart()
+    {
+        return DatabaseConfig.ov_chipkaartDao.findByID(this.getKaartNummer());
+    }
+
+    public Product getProduct()
+    {
+        return DatabaseConfig.productDao.findByNummer(this.getProductNummer());
+    }
+
 }

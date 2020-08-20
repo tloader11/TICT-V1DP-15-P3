@@ -14,7 +14,7 @@ public class ReizigerDaoTest implements DaoTest
         ReizigerDao reizigerDAO = new ReizigerOracleDaoImpl();
 
         Reiziger reiziger = new Reiziger();
-        reiziger.setVoornaam("Tristan");
+        reiziger.setVoorletters("T.F.");
         reiziger.setTussenvoegsel("ter");
         reiziger.setAchternaam("Haar");
         Date gbDatum = Date.valueOf("1998-04-15");
@@ -40,7 +40,7 @@ public class ReizigerDaoTest implements DaoTest
 
         System.out.println("DELETE TEST");
         //delete
-        reizigerDAO.delete(reiziger);
+        reizigerDAO.delete(reiziger.getReizigerID());
         for(Reiziger opgehaaldeReiziger : reizigerDAO.findAll())
         {
             System.out.println("THIS SHOULD NOT RETURN: " + opgehaaldeReiziger.getName() + " - " + opgehaaldeReiziger.getGeboortedatum().toString());

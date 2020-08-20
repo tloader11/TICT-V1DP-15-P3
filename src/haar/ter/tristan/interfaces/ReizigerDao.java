@@ -1,11 +1,14 @@
 package haar.ter.tristan.interfaces;
 
+import haar.ter.tristan.Main;
 import haar.ter.tristan.models.Reiziger;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface ReizigerDao
 {
+    static Connection connection = Main.connection;
     List<Reiziger> findAll();
 
     List<Reiziger> findByGeboortedatum(String GBdatum);
@@ -16,6 +19,6 @@ public interface ReizigerDao
 
     Reiziger update(Reiziger reiziger);
 
-    boolean delete(Reiziger reiziger);
+    boolean delete(long reizigerID);
 
 }

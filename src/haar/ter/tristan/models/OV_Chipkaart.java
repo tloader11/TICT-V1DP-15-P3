@@ -1,6 +1,9 @@
 package haar.ter.tristan.models;
 
+import haar.ter.tristan.DatabaseConfig;
+
 import java.sql.Date;
+import java.util.List;
 
 public class OV_Chipkaart
 {
@@ -9,6 +12,8 @@ public class OV_Chipkaart
     private short klasse;
     private float saldo;
     private long reizigerID;
+    private Reiziger reiziger;
+    private List<OV_Chipkaart_Product> ov_chipkaart_products;
 
     public OV_Chipkaart()
     {
@@ -16,6 +21,14 @@ public class OV_Chipkaart
 
     public long getKaartNummer() {
         return kaartNummer;
+    }
+
+    public OV_Chipkaart(long kaartNummer, Date geldigTot, short klasse, float saldo, long reizigerID) {
+        this.kaartNummer = kaartNummer;
+        this.geldigTot = geldigTot;
+        this.klasse = klasse;
+        this.saldo = saldo;
+        this.reizigerID = reizigerID;
     }
 
     public void setKaartNummer(long kaartNummer) {
@@ -52,5 +65,23 @@ public class OV_Chipkaart
 
     public void setReizigerID(long reizigerID) {
         this.reizigerID = reizigerID;
+    }
+
+    public Reiziger getReiziger()
+    {
+        if(this.reiziger == null)   //local memory caching :-)
+        {
+            this.reiziger = DatabaseConfig.reizigerDao.findByID(this.getReizigerID());
+        }
+        return this.reiziger;
+    }
+
+    public List<OV_Chipkaart_Product> getOV_Chipkaart_producten()
+    {
+        if(this.ov_chipkaart_products == null)   //local memory caching :-)
+        {
+            this.ov_chipkaart_products = DatabaseConfig.ov_chipkaart_productDao.findByKaartnummer(this.getKaartNummer());
+        }
+        return this.ov_chipkaart_products;
     }
 }

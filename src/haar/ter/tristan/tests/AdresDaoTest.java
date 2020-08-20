@@ -17,6 +17,7 @@ public class AdresDaoTest implements DaoTest
         adres.setStraat("Zwanebloem");
         adres.setWoonplaats("Reeuwijk");
         adres.setAdresID(1);
+        adres.setReizigerID(1);
 
         System.out.println("CREATE TEST");
         //save
@@ -37,7 +38,7 @@ public class AdresDaoTest implements DaoTest
 
         System.out.println("DELETE TEST");
         //delete
-        adresDAO.delete(adres);
+        adresDAO.delete(adres.getAdresID());
         for(Adres opgehaaldAdres : adresDAO.findAll())
         {
             System.out.println("THIS SHOULD NOT RETURN: " + opgehaaldAdres.getPostcode() + " " + opgehaaldAdres.getHuisnummer());

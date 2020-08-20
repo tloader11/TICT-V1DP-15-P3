@@ -1,11 +1,15 @@
 package haar.ter.tristan.interfaces;
 
+import haar.ter.tristan.Main;
 import haar.ter.tristan.models.Product;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface ProductDao
 {
+    static Connection connection = Main.connection;
+
     List<Product> findAll();
 
     Product findByNummer(long nummer);
@@ -14,5 +18,5 @@ public interface ProductDao
 
     Product update(Product product);
 
-    boolean delete(Product product);
+    boolean delete(long productID);
 }

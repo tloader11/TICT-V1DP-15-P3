@@ -41,7 +41,7 @@ public class ProductDaoTest implements DaoTest
 
         System.out.println("DELETE TEST");
         //delete
-        productDAO.delete(product);
+        productDAO.delete(product.getProductNummer());
         for(Product opgehaaldProduct : productDAO.findAll())
         {
             System.out.println("THIS SHOULD NOT RETURN: " + opgehaaldProduct.getProductNaam() + " - " + opgehaaldProduct.getBeschrijving());

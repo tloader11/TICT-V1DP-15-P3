@@ -11,6 +11,13 @@ public class Product
     {
     }
 
+    public Product(long productNummer, String productNaam, String beschrijving, float prijs) {
+        this.productNummer = productNummer;
+        this.productNaam = productNaam;
+        this.beschrijving = beschrijving;
+        this.prijs = prijs;
+    }
+
     public long getProductNummer() {
         return productNummer;
     }

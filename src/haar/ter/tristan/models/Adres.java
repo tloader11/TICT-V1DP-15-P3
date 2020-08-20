@@ -1,5 +1,7 @@
 package haar.ter.tristan.models;
 
+import haar.ter.tristan.DatabaseConfig;
+
 public class Adres
 {
     private long adresID;
@@ -11,6 +13,15 @@ public class Adres
 
     public Adres()
     {
+    }
+
+    public Adres(long adresID, String postcode, String huisnummer, String straat, String woonplaats, long reizigerID) {
+        this.adresID = adresID;
+        this.postcode = postcode;
+        this.huisnummer = huisnummer;
+        this.straat = straat;
+        this.woonplaats = woonplaats;
+        this.reizigerID = reizigerID;
     }
 
     public long getAdresID() {
@@ -59,5 +70,10 @@ public class Adres
 
     public void setReizigerID(long reizigerID) {
         this.reizigerID = reizigerID;
+    }
+
+    public Reiziger getReiziger()
+    {
+        return DatabaseConfig.reizigerDao.findByID(this.getReizigerID());
     }
 }

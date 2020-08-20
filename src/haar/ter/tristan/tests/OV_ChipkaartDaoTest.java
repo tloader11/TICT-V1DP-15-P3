@@ -39,7 +39,7 @@ public class OV_ChipkaartDaoTest implements DaoTest
 
         System.out.println("DELETE TEST");
         //delete
-        ov_chipkaartDAO.delete(ov_chipkaart);
+        ov_chipkaartDAO.delete(ov_chipkaart.getKaartNummer());
         for(OV_Chipkaart opgehaaldOV_Chipkaart : ov_chipkaartDAO.findAll())
         {
             System.out.println("THIS SHOULD NOT RETURN: " + opgehaaldOV_Chipkaart.getKaartNummer() + " - " + opgehaaldOV_Chipkaart.getGeldigTot().toString());

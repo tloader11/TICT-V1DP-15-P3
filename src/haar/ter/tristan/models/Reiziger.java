@@ -1,11 +1,14 @@
 package haar.ter.tristan.models;
 
+import haar.ter.tristan.DatabaseConfig;
+
 import java.sql.Date;
+import java.util.List;
 
 public class Reiziger
 {
     private long reizigerID;
-    private String voornaam;
+    private String voorletters;
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
@@ -13,6 +16,14 @@ public class Reiziger
     public Reiziger()
     {
         //in afbeelding heeft Reiziger geen constructor params.
+    }
+
+    public Reiziger(long reizigerID, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
+        this.reizigerID = reizigerID;
+        this.voorletters = voorletters;
+        this.tussenvoegsel = tussenvoegsel;
+        this.achternaam = achternaam;
+        this.geboortedatum = geboortedatum;
     }
 
     public long getReizigerID() {
@@ -23,12 +34,12 @@ public class Reiziger
         this.reizigerID = reizigerID;
     }
 
-    public String getVoornaam() {
-        return this.voornaam;
+    public String getVoorletters() {
+        return this.voorletters;
     }
 
-    public void setVoornaam(String voornaam) {
-        this.voornaam = voornaam;
+    public void setVoorletters(String voorletters) {
+        this.voorletters = voorletters;
     }
 
     public String getTussenvoegsel() {
@@ -57,6 +68,16 @@ public class Reiziger
 
     public String getName()
     {
-        return String.join(" ", new String[]{this.getVoornaam(), this.getTussenvoegsel(), this.getAchternaam()} );
+        return String.join(" ", new String[]{this.getVoorletters(), this.getTussenvoegsel(), this.getAchternaam()} );
+    }
+
+    public List<OV_Chipkaart> getOVChipkaarten ()
+    {
+        return DatabaseConfig.ov_chipkaartDao.findByReizigerID(this.getReizigerID());
+    }
+
+    public List<Adres> getAdressen ()
+    {
+        return DatabaseConfig.adresDao.findByReizigerID(this.getReizigerID());
     }
 }
