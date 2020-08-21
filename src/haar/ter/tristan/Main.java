@@ -77,8 +77,8 @@ public class Main {
         //ovproductID, long kaartNummer, long productNummer, String reisproductStatus, Date lastUpdate
         OV_Chipkaart_Product testOV_Chipkaart_Product1 = new OV_Chipkaart_Product(1, 1, 1, "actief", Date.valueOf("2020-08-21"));
         OV_Chipkaart_Product testOV_Chipkaart_Product2 = new OV_Chipkaart_Product(2, 1, 4, "actief", Date.valueOf("2020-08-21"));
-        OV_Chipkaart_Product testOV_Chipkaart_Product3 = new OV_Chipkaart_Product(3, 2, 2, "actief", Date.valueOf("2020-08-21"));
-        OV_Chipkaart_Product testOV_Chipkaart_Product4 = new OV_Chipkaart_Product(4, 3, 3, "actief", Date.valueOf("2020-08-21"));
+        OV_Chipkaart_Product testOV_Chipkaart_Product3 = new OV_Chipkaart_Product(3, 2, 1, "actief", Date.valueOf("2020-08-21"));
+        OV_Chipkaart_Product testOV_Chipkaart_Product4 = new OV_Chipkaart_Product(4, 3, 1, "actief", Date.valueOf("2020-08-21"));
         DatabaseConfig.ov_chipkaart_productDao.save(testOV_Chipkaart_Product1);
         DatabaseConfig.ov_chipkaart_productDao.save(testOV_Chipkaart_Product2);
         DatabaseConfig.ov_chipkaart_productDao.save(testOV_Chipkaart_Product3);
@@ -131,7 +131,38 @@ public class Main {
             System.out.println(adres.getStraat() + " " + adres.getHuisnummer());
         }
 
+        
+        //P3 addons:
 
+        //get products for OV_Chipkaart via DAO
+        OV_Chipkaart p3_ov_test = DatabaseConfig.ov_chipkaartDao.findByID(1);
+        List<Product> p3_products = DatabaseConfig.ov_chipkaartDao.getProductsForOV_Chipkaart(p3_ov_test);
+        for(Product product : p3_products)
+        {
+            System.out.println("Kaart met ID: " + p3_ov_test.getKaartNummer() + " heeft product " + product.getProductNaam());
+        }
+        //get products for OV_Chipkaart via Object
+        p3_products = p3_ov_test.getProducten();
+        for(Product product : p3_products)
+        {
+            System.out.println("Kaart met ID: " + p3_ov_test.getKaartNummer() + " heeft product " + product.getProductNaam());
+        }
+
+
+
+        //get OV_Chipkaarten for products via DAO
+        Product p3_test = DatabaseConfig.productDao.findByNummer(1);
+        List<OV_Chipkaart> p3_ov_chipkaarten = DatabaseConfig.productDao.getOV_ChipkaartenForProducts(p3_test);
+        for(OV_Chipkaart ov_chipkaart: p3_ov_chipkaarten)
+        {
+            System.out.println("Kaart met ID: " + ov_chipkaart.getKaartNummer() + " en klasse " + ov_chipkaart.getKlasse() + " gevonden voor product " + p3_test.getProductNaam() + " !");
+        }
+        //get OV_Chipkaarten for product via Object
+        List<OV_Chipkaart> ov_chipkaartList = p3_test.getOV_Chipkaarten();
+        for(OV_Chipkaart ov_chipkaart : ov_chipkaartList)
+        {
+            System.out.println("Kaart met ID: " + ov_chipkaart.getKaartNummer() + " en klasse " + ov_chipkaart.getKlasse() + " gevonden voor product " + p3_test.getProductNaam() + " !");
+        }
 
 
     }

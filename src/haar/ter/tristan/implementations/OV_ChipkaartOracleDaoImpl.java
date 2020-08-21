@@ -157,4 +157,33 @@ public class OV_ChipkaartOracleDaoImpl implements OV_ChipkaartDao
             return false;
         }
     }
+
+    @Override
+    public List<Product> getProductsForOV_Chipkaart(OV_Chipkaart ov_chipkaart) {
+        String query = "SELECT PRODUCT.* FROM OV_CHIPKAART_PRODUCT \n" +
+                "LEFT JOIN PRODUCT ON OV_CHIPKAART_PRODUCT.productnummer = product.productnummer \n" +
+                "WHERE OV_CHIPKAART_PRODUCT.kaartnummer = " + ov_chipkaart.getKaartNummer();
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            List<Product> products = new ArrayList<>();
+            while (rs.next()) {
+                products.add(
+                        new Product(
+                                rs.getInt("PRODUCTNUMMER"),
+                                rs.getString("PRODUCTNAAM"),
+                                rs.getString("BESCHRIJVING"),
+                                rs.getFloat("PRIJS")
+                        )
+                );
+            }
+            rs.close();
+            stmt.close();
+            return products;
+        }
+        catch (SQLException ex)
+        {
+            return null;
+        }
+    }
 }

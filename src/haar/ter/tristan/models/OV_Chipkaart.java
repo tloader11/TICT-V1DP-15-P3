@@ -3,6 +3,7 @@ package haar.ter.tristan.models;
 import haar.ter.tristan.DatabaseConfig;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OV_Chipkaart
@@ -14,6 +15,7 @@ public class OV_Chipkaart
     private long reizigerID;
     private Reiziger reiziger;
     private List<OV_Chipkaart_Product> ov_chipkaart_products;
+    private List<Product> products;
 
     public OV_Chipkaart()
     {
@@ -76,12 +78,27 @@ public class OV_Chipkaart
         return this.reiziger;
     }
 
-    public List<OV_Chipkaart_Product> getOV_Chipkaart_producten()
+    public List<OV_Chipkaart_Product> getOV_Chipkaart_producten()  //lazy loading instead of eager...., no loop problems..
     {
         if(this.ov_chipkaart_products == null)   //local memory caching :-)
         {
             this.ov_chipkaart_products = DatabaseConfig.ov_chipkaart_productDao.findByKaartnummer(this.getKaartNummer());
         }
         return this.ov_chipkaart_products;
+    }
+
+    public List<Product> getProducten() //lazy loading instead of eager...., no loop problems..
+    {
+        if(this.products == null)   //local memory caching :-)
+        {
+            List<Product> products = new ArrayList<>();
+            this.getOV_Chipkaart_producten();    //make sure the relation is init'ed.
+            for(OV_Chipkaart_Product ov_chipkaart_product : this.getOV_Chipkaart_producten())
+            {
+                products.add(ov_chipkaart_product.getProduct());
+            }
+            this.products = products;
+        }
+        return this.products;
     }
 }

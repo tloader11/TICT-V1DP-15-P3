@@ -3,6 +3,7 @@ package haar.ter.tristan.implementations;
 import haar.ter.tristan.interfaces.ProductDao;
 import haar.ter.tristan.interfaces.ProductDao;
 import haar.ter.tristan.models.Adres;
+import haar.ter.tristan.models.OV_Chipkaart;
 import haar.ter.tristan.models.Product;
 import haar.ter.tristan.models.Product;
 
@@ -124,6 +125,36 @@ public class ProductOracleDaoImpl implements ProductDao
         {
             ex.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public List<OV_Chipkaart> getOV_ChipkaartenForProducts(Product product) {
+        String query = "SELECT OV_CHIPKAART.* FROM OV_CHIPKAART_PRODUCT \n" +
+                "LEFT JOIN OV_CHIPKAART ON OV_CHIPKAART_PRODUCT.kaartnummer = ov_chipkaart.kaartnummer \n" +
+                "WHERE OV_CHIPKAART_PRODUCT.productnummer = " + product.getProductNummer();
+        try {
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            List<OV_Chipkaart> ov_chipkaarten = new ArrayList<>();
+            while (rs.next()) {
+                ov_chipkaarten.add(
+                        new OV_Chipkaart(
+                                rs.getInt("KAARTNUMMER"),
+                                rs.getDate("GELDIGTOT"),
+                                rs.getShort("KLASSE"),
+                                rs.getFloat("SALDO"),
+                                rs.getInt("REIZIGERID")
+                        )
+                );
+            }
+            rs.close();
+            stmt.close();
+            return ov_chipkaarten;
+        }
+        catch (SQLException ex)
+        {
+            return null;
         }
     }
 }
